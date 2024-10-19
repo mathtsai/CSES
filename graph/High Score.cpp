@@ -109,6 +109,8 @@ int main()
         int u,v,w;
         cin>>u>>v>>w;
         g[u].pb({v,-w});
+        //reverse g
+        gt[v].pb(u);
     }
     //Bellman-Ford
     dis[1]=0;
@@ -132,12 +134,6 @@ int main()
             if(dis[i]<2e16 && dis[i]+w < dis[v]) in = true;
         }
         mark[i] = in;
-    }
-    //gt = reverse(g)
-    for(int i=1; i<=n; i++)
-    {
-        for(auto &[v,w]: g[i])
-            gt[v].pb(i);
     }
     //if vertex n can be reached from mark vertices, return -1
     if(dfs(n)) cout<<"-1\n";
