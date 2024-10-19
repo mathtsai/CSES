@@ -99,7 +99,7 @@ int main()
     //init graph
     for(int i=1; i<=n; i++)
     {
-        dis[i] = 1e18;
+        dis[i] = 4e16;
         mark[i] = false;
         vis[i] = false;
     }
@@ -129,7 +129,7 @@ int main()
         bool in = false;
         for(auto &[v,w]: g[i])
         {
-            if(dis[i]<1e18 && dis[i]+w < dis[v]) in = true;
+            if(dis[i]<2e16 && dis[i]+w < dis[v]) in = true;
         }
         mark[i] = in;
     }
