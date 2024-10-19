@@ -72,20 +72,17 @@ Int C(int m, int n)
 }*/
 
 vi gt[N];
-vector<pii> g[N];
+vector<pair<pii,int>> g;
 ll dis[N];
-bool mark[N], vis[N];
+bool vis[N];
 
-bool dfs(int u)
+void dfs(int u)
 {
-    if(mark[u]) return true;
-    vis[u]=true;
-    bool ok = false;
+    vis[u] = true;
     for(auto &v: gt[u])
     {
-        if(!vis[v]) ok |= dfs(v);
+        if(!vis[v]) dfs(v);
     }
-    return ok;
 }
 
 int main()
@@ -96,46 +93,43 @@ int main()
     int n,m;
     cin>>n>>m;
 
-    //init graph
+    //init
     for(int i=1; i<=n; i++)
     {
         dis[i] = 4e16;
-        mark[i] = false;
         vis[i] = false;
     }
-    //input g
     while(m--)
     {
         int u,v,w;
         cin>>u>>v>>w;
-        g[u].pb({v,-w});
+        g.pb({{u,v},-w});
         //reverse g
         gt[v].pb(u);
     }
+    //mark all vertices can be reach from vertex n
+    dfs(n);
     //Bellman-Ford
     dis[1]=0;
     for(int i=0; i<n-1; i++)
     {
-        for(int j=1; j<=n; j++)
+        for(auto &[vertex,w]: g)
         {
-            for(auto &[v,w]: g[j])
-            {
-                if(dis[j]+w < dis[v])
-                    dis[v] = dis[j]+w;
-            }
+            auto &[u,v] = vertex;
+            if(dis[u]+w < dis[v])
+                dis[v] = dis[u]+w;
         }
     }
-    //mark vertices can be reached from vertex 1, and in a negative cycle
-    for(int i=1; i<=n; i++)
+    //vertex u can be reached from vertex 1 and n, and it is in an negative cycle
+    for(auto &[vertex,w]: g)
     {
-        bool in = false;
-        for(auto &[v,w]: g[i])
+        auto &[u,v] = vertex;
+        if(vis[u] && dis[u]<2e16 && dis[u]+w < dis[v])
         {
-            if(dis[i]<2e16 && dis[i]+w < dis[v]) in = true;
+            cout<<"-1\n";
+            return 0;
         }
-        mark[i] = in;
     }
-    //if vertex n can be reached from mark vertices, return -1
-    if(dfs(n)) cout<<"-1\n";
-    else cout<<-dis[n]<<'\n';
+
+    cout<<-dis[n]<<'\n';
 }
